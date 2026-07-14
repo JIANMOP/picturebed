@@ -1,0 +1,4 @@
+[submodule "thirdparty/md"]
+    path = thirdparty/md
+    url = https://github.com/JIANMOP/md.git
+    branch = main
