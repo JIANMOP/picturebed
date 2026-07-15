@@ -4,11 +4,21 @@ import { qiniuDelete } from './qiniu'
 import { upyunDelete } from './upyun'
 import { cloudinaryDelete } from './cloudinary'
 import { s3Delete } from './s3-delete'
+import { useConfigStore } from '../stores/config'
+
+function getToken(backend: string): string {
+  const cfg = useConfigStore().get(backend)
+  if (cfg.accessToken) return cfg.accessToken
+  if (cfg.token) return cfg.token
+  // Fallback to localStorage
+  const raw = localStorage.getItem('pb_config_' + backend) || '{}'
+  return JSON.parse(raw).accessToken || JSON.parse(raw).token || ''
+}
 
 export async function deleteFromBackend(backend: string, meta: Record<string, string>): Promise<void> {
   switch (backend) {
-    case 'github': return ghDelete(meta)
-    case 'gitee': return giteeDelete(meta)
+    case 'github': return ghDelete(meta, getToken('github'))
+    case 'gitee': return giteeDelete(meta, getToken('gitee'))
     case 'qiniu': return qiniuDelete(meta)
     case 'upyun': return upyunDelete(meta)
     case 'cloudinary': return cloudinaryDelete(meta)

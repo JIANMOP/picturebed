@@ -39,9 +39,13 @@ function onFileInput(e: Event) {
 
 function onPaste(e: ClipboardEvent) {
   const files: File[] = []
-  e.clipboardData?.items.forEach((item) => {
-    if (item.type.startsWith('image/')) { const f = item.getAsFile(); if (f) files.push(f) }
-  })
+  const items = e.clipboardData?.items
+  if (items) {
+    for (let i = 0; i < items.length; i++) {
+      const item = items[i]
+      if (item.type.startsWith('image/')) { const f = item.getAsFile(); if (f) files.push(f) }
+    }
+  }
   if (files.length) uploadFiles(files)
 }
 

@@ -11,6 +11,8 @@
   </head>
   <body class="bg-background text-text">
     <div id="app"></div>
+    <!-- runtime env injected by docker-entrypoint, not bundled -->
+    <script src="/env.js"></script>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

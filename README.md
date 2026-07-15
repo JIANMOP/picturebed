@@ -68,6 +68,42 @@ npm run build
 
 Output in `dist/` — deploy as static files.
 
+## Docker
+
+```bash
+# Pre-build the Go proxy binary (one time)
+sh build-go.sh
+
+# Build and start
+docker compose up -d
+
+# Or build manually
+docker build -t picturebed .
+docker run -d -p 6868:80 picturebed
+```
+
+Open `http://localhost:6868`.
+
+> `build-go.sh` produces `server/proxy` (~8MB static binary). It's included in the Docker image directly, so no Go SDK download is needed during build.
+
+### Environment variables
+
+Two ways to configure backends:
+
+**1. `.env` file (recommended)**
+```bash
+cp .env.example .env
+# Edit .env with your credentials
+docker compose up -d
+```
+The `.env` file is read by Vite at build time. Not ignored by Docker anymore.
+
+**2. Build args**
+```bash
+docker compose build --build-arg VITE_GITHUB_TOKEN=xxx
+```
+Or set them in your shell environment — docker compose passes matching vars automatically.
+
 ## Tech Stack
 
 - Vue 3 (Composition API + `<script setup>`)

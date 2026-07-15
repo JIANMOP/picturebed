@@ -41,10 +41,8 @@ export async function ghUpload(
   }
 }
 
-export async function ghDelete(meta: Record<string, string>): Promise<void> {
+export async function ghDelete(meta: Record<string, string>, token: string): Promise<void> {
   const { owner, repo, path, sha } = meta
-  const cfg = JSON.parse(localStorage.getItem('pb_config_github') || '{}')
-  const token = cfg.accessToken
   if (!token) throw new Error('GitHub config not found')
 
   await apiFetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`, {

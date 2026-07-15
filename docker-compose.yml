@@ -1,0 +1,9 @@
+services:
+  picturebed:
+    build: .
+    container_name: picturebed
+    ports:
+      - "6868:80"
+    volumes:
+      - ./.env:/etc/picturebed/.env:ro
+    restart: unless-stopped

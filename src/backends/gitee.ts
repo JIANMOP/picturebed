@@ -48,10 +48,8 @@ export async function giteeUpload(
   }
 }
 
-export async function giteeDelete(meta: Record<string, string>): Promise<void> {
+export async function giteeDelete(meta: Record<string, string>, accessToken: string): Promise<void> {
   const { owner, repo, path, sha, branch } = meta
-  const config = JSON.parse(localStorage.getItem('pb_config_gitee') || '{}')
-  const accessToken = config.accessToken
   if (!accessToken) throw new Error('Gitee 配置未找到')
 
   await apiFetch('/api/delete/gitee', {

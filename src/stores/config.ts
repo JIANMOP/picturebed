@@ -23,12 +23,15 @@ export const useConfigStore = defineStore('config', () => {
   ]
 
   function loadFromEnv() {
+    // Try runtime config first (Docker volume mount), then build-time VITE_* vars
+    const runtimeCfg = (window as any).__PICTUREBED_CONFIG__ || {}
     for (const [backendId, mapping] of envMappings) {
-      if (configs.value[backendId]) continue // localStorage takes priority
+      if (configs.value[backendId]) continue
       const cfg: Record<string, string> = {}
       for (const [field, envKey] of Object.entries(mapping)) {
-        const val = (import.meta as any).env[envKey]
-        if (val) cfg[field] = val
+        // Runtime config uses short keys (e.g. "repo"), build-time uses VITE_* prefixes
+        const runtimeVal = runtimeCfg[envKey] || (import.meta as any).env[envKey]
+        if (runtimeVal) cfg[field] = runtimeVal
       }
       if (Object.keys(cfg).length > 0) {
         configs.value[backendId] = cfg
@@ -47,7 +50,8 @@ export const useConfigStore = defineStore('config', () => {
       }
     }
     loadFromEnv()
-    const saved = localStorage.getItem('pb_imgHost') || (import.meta as any).env.VITE_DEFAULT_BACKEND
+    const runtimeCfg = (window as any).__PICTUREBED_CONFIG__ || {}
+    const saved = localStorage.getItem('pb_imgHost') || runtimeCfg.VITE_DEFAULT_BACKEND || (import.meta as any).env.VITE_DEFAULT_BACKEND
     if (saved) imgHost.value = saved
   }
 
